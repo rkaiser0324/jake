@@ -246,16 +246,24 @@ class CakeEmbeddedDispatcher
 	function get($url)
 	{     
 		$this->_start($url);
-		
-		if (isset($this->cakeUrlBase))
+
+		try
 		{
-			define ('WEBROOT_DIR', $this->cakeUrlBase); // CakePHP 1.1
+			require_once($this->cakePath . DIRECTORY_SEPARATOR . 'index.php');
+			
+			// Commit any $_SESSION changes
+			session_write_close();
+
+			$result = $this->_finish($url);
 		}
-		
-		require_once($this->cakePath . DIRECTORY_SEPARATOR . 'index.php');
-		
-		$result = $this->_finish($url);
-		
+		catch (exception $e)
+		{
+			// Unusual HTTP response codes, such as 404's, will throw exceptions
+			$result = array(
+				'head' => array(), 
+				'body' => "<div style='border:1px solid #999;padding:10px;background:#eee'><p style='color:red'>{$e->getMessage()}</p> <p>File: {$e->getFile()}:{$e->getLine()}</p> <p>URL: $url</p></div>"
+				);	
+		}
 		return $result;
 	}
 	
@@ -269,14 +277,14 @@ class CakeEmbeddedDispatcher
 	 */
 	function _start($url)
 	{
+
 		$parts = @parse_url($url);
-		
 		// If URL has a query part, set its values as standard $_GET
 		
 		if ($parts !== false && isset($parts['query']) && !empty($parts['query']))
 		{
 			$pairs = explode('&', $parts['query']);
-			
+
 			foreach($pairs as $pair)
 			{
 			 list($name, $value) = explode('=', $pair);
@@ -290,6 +298,8 @@ class CakeEmbeddedDispatcher
 		
 		// CakePHP doesn't receive starting slash
 		
+		if (empty($url))
+		    $url = '/';
 		if ($url[0] == '/')
 		{
 			$url = substr($url, 1);

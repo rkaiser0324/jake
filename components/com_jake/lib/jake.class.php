@@ -51,7 +51,7 @@ class Jake
 	 * @static
 	 * @since 1.0
 	 */
-	function &getInstance()
+	function getInstance()
 	{
 		static $instances = array();
 		

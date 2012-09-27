@@ -116,7 +116,7 @@ class JakeFrontComponent extends JakeComponent
 				$this->backSession['data'][$parameter] = $value;
 			}
 			
-			$session =& JFactory::getSession();
+			$session = JFactory::getSession();
 			//$session->destroy();
 			
 			//session_module_name('files');
@@ -125,10 +125,11 @@ class JakeFrontComponent extends JakeComponent
 			
 			$cakeDispatcher->setRestoreSession(false);
 		}
+
 		// Execute the CakePHP action
 		
 		$contents = $cakeDispatcher->get($cakePath);
-		
+
 		// Restore session for Joomla 1.5 (1.0 is taken care in embedded component)
 		
 		if ($this->compareJoomlaVersion('1.5.0'))
@@ -149,7 +150,7 @@ class JakeFrontComponent extends JakeComponent
 				$_SESSION[$parameter] = $value;
 			}
 		}
-				
+
 		if ($this->restoreJoomlaDb)
 		{
 			$this->restoreJoomlaDb();
@@ -276,24 +277,29 @@ class JakeFrontComponent extends JakeComponent
 			{
 				foreach($contents['head']['custom'] as $custom)
 				{
-					$this->joomlaMainframe->addCustomHeadTag($custom);
+					$joomlaDocument->addCustomTag($custom);					
 				}
 			}
 		}
 		
 		// Send contents to joomla
 
+		
 		if ($this->compareJoomlaVersion('1.5.0'))
 		{
+
 			require_once(JPATH_COMPONENT . '/jake_front_controller.class.php');
 			
 			$controller	= new JakeFrontController();
-			
+
 			$controller->setContents($contents['body']);
+
 			$controller->execute('send');
+
 		}
 		else
 		{
+			
 			require_once($this->joomlaMainframe->getPath( 'front_html' )); // HTML renderer
 			
 			$jakeHtmlRenderer = new HTML_jake();

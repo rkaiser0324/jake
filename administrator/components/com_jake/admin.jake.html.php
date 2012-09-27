@@ -85,7 +85,9 @@ class HTML_jake
 		?>
 		<h1>Jake: Joomla-CakePHP Bridge</h1>
 		
-		<form action="index2.php" method="post" name="adminForm">
+		<p>This form allows you to generate the Jake URL for a given CakePHP action.  It is not needed if you have followed the setup steps described <a href="/administrator/index.php?option=com_jake">here</a>.</p>
+		
+		<form action="index.php" method="post" name="adminForm">
 			<input type="hidden" name="option" value="<?php echo $option; ?>" />
 			<input type="hidden" name="<?php echo $taskName; ?>" value="<?php echo $task; ?>" />
 			
@@ -146,41 +148,38 @@ class HTML_jake
 		<div align="left">
 		
 		<p>
-			Jake is a Joomla component that allows <a href="http://www.cakephp.org">CakePHP</a> applications to be hosted within a Joomla website. With Jake you have a bridge to your application that requires no modifications on your CakePHP code. Your application can run with or without Jake.
+			Jake is a Joomla component that allows <a href="http://www.cakephp.org">CakePHP</a> applications to be hosted transparently within a <a href="http://www.joomla.org/">Joomla</a> website. With Jake you have a bridge to your application that requires only minimal modifications to your CakePHP code. Your application can run with or without Jake.  The current version runs on CakePHP 2.2.2 and Joomla 2.5.
 		</p>
 		
 		<h2>Documentation</h2>
 		
 		<p>
-			Jake's documentation is hosted at <a href="http://dev.sypad.com/projects/jake">http://dev.sypad.com/projects/jake</a>.
+		    The original <a href="http://dev.sypad.com/projects/jake">project homepage</a>, maintained by Mariano Iglesias, is dead.  Current documentation and setup steps are described on the <a href="http://blog.echothis.com/2012/09/26/jake-2-0-released/">Echothis blog</a>.
 		</p>
-		
-		<h2>Quick Setup</h2>
-		
-		<p>
-			Assuming you have your CakePHP application up and running, take the following steps to test your Jake install:
-		</p>
-		
-		<ol>
-			<li>Edit the file <code><?php echo $configFile; ?></code> and modify its settings as instructed.</li>
-			<li>Go to <a href="<?php echo $this->joomlaUrl; ?>/index.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?>"><?php echo $this->joomlaUrl; ?>/index.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?></a> and you should see the default page of your CakePHP application within Joomla.</li>
-			<li>Read the <a href="http://dev.sypad.com/projects/jake">documentation</a> for notes and tips on how to take better advantage of Jake.</li>
-		</ol>
 		
 		<h2>Run Jake</h2>
 		
 		<p>
-			Load your default CakePHP application (once Jake has been set up) default page with the following URL: <a href="<?php echo $this->joomlaUrl; ?>/index.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?>"><?php echo $this->joomlaUrl; ?>/index.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?></a>
+		    
+		    <?php 
+		    $url = str_replace('administrator/', '', $this->joomlaUrl) . 'app';
+		    $jake_url = str_replace('administrator/', '', $this->joomlaUrl) . 'index.php?' . JAKE_PARAMETER_OPTION . '=' . JAKE_CAKEPHP_JOOMLA_COMPONENT;
+		    
+		    $form_url = $this->joomlaUrl . 'index.php?' . JAKE_PARAMETER_OPTION . '=' . JAKE_CAKEPHP_JOOMLA_COMPONENT . '&' . $taskName . '=' . JAKE_ADMIN_PARAMETER_TASK_VALUE_FORM;
+		    ?>
+		    Once you have configured Jake as per the above link, you can load your CakePHP application at <a href="<?php echo $url ?>"><?php echo $url ?></a> which corresponds to the Jake URL <a href="<?php echo $jake_url ?>"><?php echo $jake_url ?></a>
 		</p>
 		
 		<p>
-			If you want to get the Joomla URL to load a specific application/action use the handy Jake form at <a href="<?php echo $this->joomlaUrl; ?>/administrator/index2.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?>&<?php echo $taskName; ?>=<?php echo JAKE_ADMIN_PARAMETER_TASK_VALUE_FORM; ?>"><?php echo $this->joomlaUrl; ?>/administrator/index2.php?<?php echo JAKE_PARAMETER_OPTION; ?>=<?php echo JAKE_CAKEPHP_JOOMLA_COMPONENT; ?>&<?php echo $taskName; ?>=<?php echo JAKE_ADMIN_PARAMETER_TASK_VALUE_FORM; ?></a>
+			If you want to get Joomla to load a specific action using the Jake URL's, use <a href="<?php echo $form_url ?>">this form</a>, but this shouldn't be needed in practice if you follow the steps above.
 		</p>
 		
 		<h2>Credits</h2>
 		
 		<p>
-			This project is maintained and developed by <a href="http://www.marianoiglesias.com.ar">Mariano Iglesias</a> and <a href="http://www.gigapromoters.com/blog/">Max</a>. Further credits go to Dr. Tarique Sani for his insightful ideas.
+			This project was originally developed in 2007 by <a href="http://www.marianoiglesias.com.ar">Mariano Iglesias</a> and <a href="http://www.gigapromoters.com/blog/">Max</a>. Further credits go to Dr. Tarique Sani for his insightful ideas.
+		</p>
+		<p>The current maintainer is <a href="http://blog.echothis.com">Rolf Kaiser</a>.</p>
 		</div>
 		<?php
 	}

@@ -56,7 +56,7 @@ class JakeAdminController extends JController
 	 */
 	function admin_send()
 	{
-		$document =& JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$viewType  = $document->getType();
 		
 		if (method_exists($this, 'setViewName'))
@@ -66,7 +66,7 @@ class JakeAdminController extends JController
 		}
 		else
 		{
-			$view =& $this->getView('admin_send', $viewType, 'JakeView');
+			$view = $this->getView('admin_send', $viewType, 'JakeView');
 		}
 		
 		$view->admin_send($this->contents);

@@ -73,7 +73,8 @@ class JakeAdminComponent extends JakeComponent
 		
 		if (isset($_POST['url']))
 		{
-			$jakeCallable =& Jake::getInstance();
+			$j = new Jake();
+			$jakeCallable = $j->getInstance();
 			
 			$generatedUrl = $jakeCallable->getUrl((!empty($_POST['url']) ? $_POST['url'] : null), (isset($_POST['app']) && !$this->applications[$_POST['app']]['default'] ? $_POST['app'] : null));
 		}
@@ -96,7 +97,7 @@ class JakeAdminComponent extends JakeComponent
 		
 		// Use the renderer for any version of Joomla to stay DRY
 		
-		require_once($this->joomlaMainframe->getPath( 'admin_html' )); // HTML renderer
+		require_once('admin.jake.html.php'); // HTML renderer
 		
 		$jakeHtmlRenderer = new HTML_jake();
 		
