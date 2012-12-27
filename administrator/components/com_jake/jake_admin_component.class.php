@@ -34,11 +34,13 @@ class JakeAdminComponent extends JakeComponent
 		switch($this->jakeTask)
 		{	
 			case JAKE_ADMIN_PARAMETER_TASK_VALUE_FORM:
+			    	JToolbarHelper::title('Jake URL Generator');
 				$this->_form($this->jakeOption, JAKE_PARAMETER_TASK, $this->jakeTask);
 				break;
 				
 			case JAKE_ADMIN_PARAMETER_TASK_VALUE_DOCUMENTATION:
 			default:
+			    	JToolbarHelper::title('Jake Documentation');
 				$this->_documentation(JAKE_PARAMETER_TASK);
 				break;
 		}
@@ -117,22 +119,12 @@ class JakeAdminComponent extends JakeComponent
 		
 		$contents = ob_get_clean();
 		
-		// Show contents depending on Joomla version
-		
-		if ($this->compareJoomlaVersion('1.5.0'))
-		{
-			require_once(JPATH_COMPONENT . '/jake_admin_controller.class.php');
-			
-			$controller	= new JakeAdminController();
-			
-			$controller->setContents($contents);
-			$controller->admin_send();
-		}
-		else
-		{
-			echo $contents;
-		}
+                require_once(JPATH_COMPONENT . '/jake_admin_controller.class.php');
+
+                $controller	= new JakeAdminController();
+
+                $controller->setContents($contents);
+                $controller->admin_send();
+
 	}
 }
-
-?>

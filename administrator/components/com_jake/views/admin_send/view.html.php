@@ -21,7 +21,7 @@ jimport('joomla.application.component.view');
  * @package		jake
  * @subpackage	joomla.administrator.views.send
  */
-class JakeViewAdmin_Send extends JView
+class JakeViewAdmin_Send extends JViewLegacy
 {
 	/**
 	 * Sends the contents back to Joomla

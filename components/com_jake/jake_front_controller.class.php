@@ -21,7 +21,7 @@ jimport('joomla.application.component.controller');
  * @package		jake
  * @subpackage	joomla
  */
-class JakeFrontController extends JController
+class JakeFrontController extends JControllerLegacy
 {
 	/**#@+
 	 * @access private

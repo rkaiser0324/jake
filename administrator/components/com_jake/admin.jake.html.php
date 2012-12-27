@@ -148,15 +148,12 @@ class HTML_jake
 		<div align="left">
 		
 		<p>
-			Jake is a Joomla component that allows <a href="http://www.cakephp.org">CakePHP</a> applications to be hosted transparently within a <a href="http://www.joomla.org/">Joomla</a> website. With Jake you have a bridge to your application that requires only minimal modifications to your CakePHP code. Your application can run with or without Jake.  The current version runs on CakePHP 2.2.2 and Joomla 2.5.
+			Jake is a Joomla component that allows <a href="http://www.cakephp.org">CakePHP</a> applications to be hosted transparently within a 
+                        <a href="http://www.joomla.org/">Joomla</a> website. With Jake you have a bridge to your application that requires only minimal modifications 
+                        to your CakePHP code. Your application can run with or without Jake.  The current version runs on CakePHP 2.2.2 and Joomla 3.  For more details
+                        see the <a href="https://github.com/rkaiser0324/jake">github project page</a>.
 		</p>
-		
-		<h2>Documentation</h2>
-		
-		<p>
-		    The original <a href="http://dev.sypad.com/projects/jake">project homepage</a>, maintained by Mariano Iglesias, is dead.  Current documentation and setup steps are described on the <a href="http://blog.echothis.com/2012/09/26/jake-2-0-released/">Echothis blog</a>.
-		</p>
-		
+
 		<h2>Run Jake</h2>
 		
 		<p>
@@ -171,15 +168,14 @@ class HTML_jake
 		</p>
 		
 		<p>
-			If you want to get Joomla to load a specific action using the Jake URL's, use <a href="<?php echo $form_url ?>">this form</a>, but this shouldn't be needed in practice if you follow the steps above.
+			If you want to get Joomla to load a specific action using the Jake URL's, use <a href="<?php echo $form_url ?>">this form</a>, but this shouldn't be needed in practice.
 		</p>
 		
 		<h2>Credits</h2>
 		
 		<p>
-			This project was originally developed in 2007 by <a href="http://www.marianoiglesias.com.ar">Mariano Iglesias</a> and <a href="http://www.gigapromoters.com/blog/">Max</a>. Further credits go to Dr. Tarique Sani for his insightful ideas.
-		</p>
-		<p>The current maintainer is <a href="http://blog.echothis.com">Rolf Kaiser</a>.</p>
+			This project was originally developed in 2007 by <a href="https://github.com/mariano">Mariano Iglesias</a> and <a href="http://www.gigapromoters.com/blog/">Max</a>. Further credits go to Dr. Tarique Sani for his insightful ideas.
+                        The current maintainer is <a href="http://blog.echothis.com">Rolf Kaiser</a>.</p>
 		</div>
 		<?php
 	}
