@@ -115,8 +115,8 @@ class JakeComponent {
      * @access public
      * @since 1.0
      */
-    function setJoomlaMainframe(&$joomlaMainframe) {
-        $this->joomlaMainframe = & $joomlaMainframe;
+    function setJoomlaMainframe($joomlaMainframe) {
+        $this->joomlaMainframe = $joomlaMainframe;
     }
 
     /**

@@ -157,7 +157,7 @@ class JakeFrontComponent extends JakeComponent {
      */
     function _show($contents) {
         if (isset($contents['head']) && count($contents['head']) > 0) {
-            $joomlaDocument = & JFactory::getDocument();
+            $joomlaDocument = JFactory::getDocument();
 
             // Meta tags (not http-equiv)
 
