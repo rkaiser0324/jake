@@ -56,17 +56,17 @@ class JakeFrontController extends JControllerLegacy
 	 */
 	function send()
 	{
-		$document =& JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$viewType  = $document->getType();
 		
 		if (method_exists($this, 'setViewName'))
 		{
 			$this->setViewName( 'send', 'JakeView', $viewType );
-			$view =& $this->getView();
+			$view = $this->getView();
 		}
 		else
 		{
-			$view =& $this->getView('send', $viewType, 'JakeView');
+			$view = $this->getView('send', $viewType, 'JakeView');
 		}
 		
 		$view->send($this->contents);

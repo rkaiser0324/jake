@@ -28,7 +28,7 @@ After configuration, your CakePHP app is available as-is at http://joomlaserver/
 if (defined('JAKE'))
 {
     // do something involving Joomla, e.g., get the JUser object
-    $user = & JFactory::getUser();
+    $user = JFactory::getUser();
     debug($user);
 }
 ```
