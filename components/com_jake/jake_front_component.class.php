@@ -133,7 +133,7 @@ class JakeFrontComponent extends JakeComponent {
 
           session_id($this->backSession['id']);
 
-          $session =& JFactory::getSession();
+          $session = JFactory::getSession();
           $ret = $session->restart(); */
         foreach ($this->backSession['data'] as $parameter => $value) {
             $_SESSION[$parameter] = $value;
