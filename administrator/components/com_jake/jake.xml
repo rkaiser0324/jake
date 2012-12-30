@@ -44,7 +44,7 @@
 			<filename>views/admin_send/tmpl/default.php</filename>
 			<filename>views/admin_send/view.html.php</filename>
 			<filename>admin.jake.html.php</filename>
-			<filename>admin.jake.php</filename>
+			<filename>jake.php</filename>
 			<filename>jake_admin_component.class.php</filename>
 			<filename>jake_admin_controller.class.php</filename>
 		</files>
