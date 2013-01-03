@@ -62,7 +62,7 @@ class JakeAdminController extends JControllerLegacy
 		if (method_exists($this, 'setViewName'))
 		{
 			$this->setViewName( 'admin_send', 'JakeView', $viewType );
-			$view =& $this->getView();
+			$view = $this->getView();
 		}
 		else
 		{

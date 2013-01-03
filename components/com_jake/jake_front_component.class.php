@@ -133,7 +133,7 @@ class JakeFrontComponent extends JakeComponent {
 
           session_id($this->backSession['id']);
 
-          $session =& JFactory::getSession();
+          $session = JFactory::getSession();
           $ret = $session->restart(); */
         foreach ($this->backSession['data'] as $parameter => $value) {
             $_SESSION[$parameter] = $value;
@@ -157,7 +157,7 @@ class JakeFrontComponent extends JakeComponent {
      */
     function _show($contents) {
         if (isset($contents['head']) && count($contents['head']) > 0) {
-            $joomlaDocument = & JFactory::getDocument();
+            $joomlaDocument = JFactory::getDocument();
 
             // Meta tags (not http-equiv)
 
