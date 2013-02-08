@@ -19,7 +19,8 @@ The `.htaccess` file isn't packaged as part of the component; it contains the ch
 
 ## Configuration
 
-1. The CakePHP directory should be a sibling to the Joomla one, i.e.,
+1. In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
+- The CakePHP directory should be a sibling to the Joomla one, i.e.,
 
     `/path/to/www/joomla-cms` (your JOOMLA_ROOT)
     `/path/to/www/cakephp` (your CAKEPHP_ROOT)
