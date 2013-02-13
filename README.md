@@ -19,12 +19,10 @@ The `.htaccess` file isn't packaged as part of the component; it contains the ch
 
 ## Configuration
 
-1. In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
-- The CakePHP directory should be a sibling to the Joomla one, i.e.,
-
-    `/path/to/www/joomla-cms` (your JOOMLA_ROOT)
-    `/path/to/www/cakephp` (your CAKEPHP_ROOT)
+- In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
+- The CakePHP directory should be a sibling to the Joomla one, i.e., your JOOMLA_ROOT is `/path/to/www/joomla-cms` and your CAKEPHP_ROOT is `/path/to/www/cakephp`.
 - Add the following Apache Alias, used for delivering existing files from under `CAKEPHP_ROOT/app/webroot`, to the Joomla VirtualHost. This should point to the `app/webroot` directory of the CakePHP app.
+
 ```
 Alias /webapp "CAKEPHP_ROOT/app/webroot"
 <Directory "CAKEPHP_ROOT/app/webroot">
@@ -36,6 +34,7 @@ Alias /webapp "CAKEPHP_ROOT/app/webroot"
 - Enable URL rewriting on both your JOOMLA_ROOT and CAKEPHP_ROOT
 - Bounce Apache
 - Update `CAKEPHP_ROOT/index.php` to make the following changes:
+
 ```php
 [...]
     define('APP_DIR', 'app');
@@ -46,6 +45,7 @@ Alias /webapp "CAKEPHP_ROOT/app/webroot"
 [...]
 ```
 - Update `CAKEPHP_ROOT/app/webroot/index.php` to make the following changes:
+
 ```php
 [...]
 //define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
@@ -72,13 +72,43 @@ $Dispatcher = new Dispatcher();
 $r = new CakeRequest();
 if (defined('JAKE'))
 {
-        $r->url = $url;
-        $r->here = $url;
-        unset($url);
+    
+    $r->url = $url;
+    $r->here = $url;
+    unset($url);
+    
+    class JakeResponse extends CakeResponse
+    {
+    /**
+     * Sends the response to the client, without some headers - e.g., the Content-Length header shouldn't be set 
+     * explicitly because Joomla doesn't set it, and anything Cake would set, would be wrong in this case.
+     *
+     * @return void
+     */
+            public function send() {
+                    if (isset($this->_headers['Location']) && $this->_status === 200) {
+                            $this->statusCode(302);
+                    }
+                    $codeMessage = $this->_statusCodes[$this->_status];
+                    $this->_setCookies();
+                    foreach ($this->_headers as $header => $value) {
+                            $this->_sendHeader($header, $value);
+                    }
+                    if ($this->_file) {
+                            $this->_sendFile($this->_file);
+                            $this->_file = null;
+                    } else {
+                            $this->_sendContent($this->_body);
+                    }
+            }
+    }
+    $Dispatcher->dispatch($r, new JakeResponse(array('charset' => Configure::read('App.encoding'))));
 }
-$Dispatcher->dispatch($r, new CakeResponse(array('charset' => Configure::read('App.encoding'))));
+else
+    $Dispatcher->dispatch($r, new CakeResponse(array('charset' => Configure::read('App.encoding'))));
 ```
 - If you have upgraded Joomla from a previous 1.5 version that had the previous Jake component installed (which obviously stopped working when you upgraded), uninstall Jake.  In addition, you'll need to manually remove the Jake menu links from the database (which in my experience were not deleted upon uninstall).  To do this, execute the following, replacing your Joomla table prefix as appropriate:
+
 ```sql
 DELETE FROM `[TABLE_PREFIX]_menu` WHERE `link` LIKE '%jake%';
 ```
@@ -89,7 +119,6 @@ For more details on configuration, see [this blog post](http://blog.echothis.com
 ## Usage
 
 After configuration, your CakePHP app is available as-is at `http://joomlaserver/app/`, so you can do stuff like this:
-
 ```php
 if (defined('JAKE'))
 {
