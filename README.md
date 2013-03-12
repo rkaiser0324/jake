@@ -15,12 +15,10 @@ follow these steps:
 - If you're not on Windows, zip it up via commandline.  Otherwise, multi-select `jake.xml`, `admin/`, and `site/`.  Right-click *Send to Compressed (zipped) folder* to zip it up and rename the resulting zipfile as desired
 - In the Joomla Extension Manager, browse to the zipfile to install it.
 
-The `.htaccess` file isn't packaged as part of the component; it contains the changes needed to support SEO-friendly CakePHP URLs.
-
 ## Configuration
 
 - In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
-- The CakePHP directory should be a sibling to the Joomla one, i.e., your JOOMLA_ROOT is `/path/to/www/joomla-cms` and your CAKEPHP_ROOT is `/path/to/www/cakephp`.
+- The CakePHP directory should be named "cakephp" and be a sibling to the Joomla one, i.e., your JOOMLA_ROOT is `/path/to/www/joomla-cms` and your CAKEPHP_ROOT is `/path/to/www/cakephp`.
 - Add the following Apache Alias, used for delivering existing files from under `CAKEPHP_ROOT/app/webroot`, to the Joomla VirtualHost. This should point to the `app/webroot` directory of the CakePHP app.
 
 ```
@@ -33,6 +31,37 @@ Alias /webapp "CAKEPHP_ROOT/app/webroot"
 ```
 - Enable URL rewriting on both your JOOMLA_ROOT and CAKEPHP_ROOT
 - Bounce Apache
+- Update the Custom Redirects section of `JOOMLA_ROOT/.htaccess` as follows to support SEO-friendly CakePHP URLs:
+
+```
+## Begin - Custom redirects
+#
+# If you need to redirect some pages, or set a canonical non-www to
+# www redirect (or vice versa), place that code here. Ensure those
+# redirects use the correct RewriteRule syntax and the [R=301,L] flags.
+#
+
+# For Jake, we need to handle everything that starts with "app"
+# See http://www.phpbb-seo.com/en/apache-mod-rewrite/article3226.html 
+# and http://blog.echothis.com/2009/07/22/search-engine-friendly-urls-using-the-jake-bridge/
+
+# First, redirect any static assets to /webapp/* as per http://www.askapache.com/htaccess/setenvif.html
+# Note use of (.+) to make sure that /app/ itself is skipped here
+
+SetEnvIfNoCase  REQUEST_URI "\/app\/(.+)$"  path_to_check=cakephp/app/webroot/$1
+
+# Make sure that path_to_check is not empty
+RewriteCond     %{ENV:path_to_check} ^(.+)$   
+
+RewriteCond     %{DOCUMENT_ROOT}/../%{ENV:path_to_check} -f                     [OR]
+RewriteCond     %{DOCUMENT_ROOT}/../%{ENV:path_to_check} -d 
+RewriteRule     ^app\/(.*)$     /webapp/$1                                      [QSA,L]
+
+# And finally, handle everything remaining as an ordinary Cake action
+RewriteRule    ^app(.*)$	/index.php?option=com_jake&jrun=$1		[QSA,L]
+
+## End - Custom redirects
+```
 - Update `CAKEPHP_ROOT/index.php` to make the following changes:
 
 ```php
