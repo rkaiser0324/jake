@@ -252,8 +252,7 @@ class CakeEmbeddedDispatcher {
                 'body' => sprintf("<div style='border:1px solid #999;padding:10px;background:#eee'><p style='color:red;font-weight:bold'>%s</p> 
                     <p>URL: %s</p> 
                     <p>File: %s:%s</p> 
-                    <pre>%s</pre></div>", 
-                        $e->getMessage(), $_url, $e->getFile(), $e->getLine(), $e->getTraceAsString())
+                    <pre>%s</pre></div>", $e->getMessage(), $_url, $e->getFile(), $e->getLine(), $e->getTraceAsString())
             );
         }
         return $result;
@@ -338,9 +337,9 @@ class CakeEmbeddedDispatcher {
      * @since 1.0
      */
     function _finish($url) {
-        // set a reasonable limit - my default limit, 100000, was causing this to fail silently.  Now it errors loudly.
+        // set a known, reasonable limit - this matches my default limit, 100000
         $backtrack_limit = ini_get('pcre.backtrack_limit');
-        ini_set('pcre.backtrack_limit', 200000);
+        ini_set('pcre.backtrack_limit', 100000);
 
         $pcre_errors = array();
 
@@ -369,7 +368,6 @@ class CakeEmbeddedDispatcher {
         $html = ob_get_clean();
 
         // Modify references to CakePHP URLs
-
         if (!empty($this->cakeUrlBase)) {
             $html = $this->_changeReferences($html);
         }
@@ -382,17 +380,24 @@ class CakeEmbeddedDispatcher {
 
         $body = '';
         $head = '';
-
-        // Get the head
-
-        if (preg_match_all('/' . CAKEED_REGEX_PATTERN_HEAD . '/si', $html, $matches, PREG_PATTERN_ORDER) == 1) {
-            $head = $matches[1][0];
+        // Get the head       
+        // Use DOMDocument to prevent backtracking errors.  Probably the other regexes could be replaced as well.
+        // http://www.the-art-of-web.com/php/html-xpath-query/
+        libxml_use_internal_errors(true);
+        $doc = new DOMDocument();
+        $doc->loadHTML($html);
+        // Swallow and ignore parsing errors (typically things like "Unexpected end tag : a")
+        $errors = libxml_get_errors();
+        //var_dump($errors);
+        libxml_clear_errors();
+        
+        $arr = $doc->getElementsByTagName("head");
+        
+        foreach ($arr as $item) {
+           $head = $this->_get_inner_html($item);
+           // Should only be one, but break to be sure
+           break;
         }
-
-        $err = $this->pcre_error_decode();
-        if ($err != null)
-            $pcre_errors[] = 'Jake error in cake_embedded_dispatcher.class.php (head): ' . $err;
-
 
         if (!empty($head)) {
             // Get elements within head
@@ -405,7 +410,6 @@ class CakeEmbeddedDispatcher {
 
             $contents['head'] = $result;
         }
-
         // Get the body
 
         if (preg_match_all('/' . CAKEED_REGEX_PATTERN_BODY . '/si', $html, $matches, PREG_PATTERN_ORDER) == 1) {
@@ -469,9 +473,6 @@ class CakeEmbeddedDispatcher {
      * @since 1.0
      */
     function _parseHead(&$head) {
-//		echo 'head=';
-//				print_r($head);
-//				die();
 
         $result = array();
 
@@ -612,9 +613,18 @@ class CakeEmbeddedDispatcher {
         // Change relative CakePHP links
 
         if (!empty($this->component)) {
-            $result = preg_replace('/<a([^>]*?)href="(\/[^"]*+)"([^>]*?)>/ie', "\$this->_changeUrl('<a', '$1', '$2', '$3', '>')", $result);
-            $result = preg_replace('/<form([^>]*?)action="(\/[^"]*+)"([^>]*?)>/ie', "\$this->_changeUrl('<form', '$1', '$2', '$3', '>', 'action=\"')", $result);
-            $result = preg_replace('/Ajax\.Updater\(' . '(\'[^\']*?\')' . '(,\')' . '([^\']*+)' . '(\')/ie', "\$this->_changeUrl('Ajax.Updater($1', '$2', '$3', '', '', '', '\'', true, true)", $result);
+            // Switch to preg_replace_callback() as per http://stackoverflow.com/questions/19245205/replace-deprecated-preg-replace-e-with-preg-replace-callback?noredirect=1&lq=1
+            // See http://stackoverflow.com/questions/11164563/preg-replace-callback-calback-inside-current-object-instance
+            $that = $this;
+            $result = preg_replace_callback('/<a([^>]*?)href="(\/[^"]*+)"([^>]*?)>/i', function($matches) use ($that) {
+                return $that->_changeUrl('<a', $matches[1], $matches[2], $matches[3], '>');
+            }, $result);
+            $result = preg_replace_callback('/<form([^>]*?)action="(\/[^"]*+)"([^>]*?)>/i', function($matches) use ($that) {
+                return $that->_changeUrl('<form', $matches[1], $matches[2], $matches[3], '>', 'action=\"');
+            }, $result);
+            $result = preg_replace_callback('/Ajax\.Updater\(' . '(\'[^\']*?\')' . '(,\')' . '([^\']*+)' . '(\')/i', function($matches) use ($that) {
+                return $that->_changeUrl('Ajax.Updater(' . $matches[1], $matches[2], $matches[3], '', '', '', '\'', true, true);
+            }, $result);
         }
 
         return $result;
@@ -679,6 +689,16 @@ class CakeEmbeddedDispatcher {
         $result = stripslashes($result);
 
         return $result;
+    }
+
+    // Utility function from https://gist.github.com/komlenic/1374083
+    private function _get_inner_html($node) {
+        $innerHTML = '';
+        $children = $node->childNodes;
+        foreach ($children as $child) {
+            $innerHTML .= $child->ownerDocument->saveXML($child);
+        }
+        return $innerHTML;
     }
 
 }

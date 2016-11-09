@@ -1,11 +1,14 @@
 jake
 ====
 
-This is a Joomla 3.0 component that allows you to render a CakePHP 2.2 app inside Joomla.  The project was begun in 2007 (supporting Joomla 1.5 and CakePHP 1.2), 
-and in 2012 I updated it to support Joomla 3.0 and CakePHP 2.2.
+This is a Joomla component that allows you to render a CakePHP app inside Joomla.  The project was begun in 2007 (supporting Joomla 1.5 and CakePHP 1.2).  It currently supports Joomla 3.4.6 and CakePHP 2.9.1, with PHP 5.5+.
+
+A similar plugin for WordPress, [CakePress](https://github.com/rkaiser0324/CakePress), has also spun out of this project.
+
 
 ## Packaging for Joomla
-Now that Joomla 3.0 offers on-demand "discovery" of new extensions directly from the file system, it's no longer necessary to package them up if you don't want to.  But if you do wish to package this for distribution, 
+
+Now that Joomla offers on-demand "discovery" of new extensions directly from the file system, it's no longer necessary to package them up if you don't want to.  But if you do wish to package this for distribution, 
 follow these steps:
 
 1.  Copy the contents of this repo into the a temporary directory somewhere
@@ -14,6 +17,7 @@ follow these steps:
 - Move `components/com_jake` to `site/`
 - If you're not on Windows, zip it up via commandline.  Otherwise, multi-select `jake.xml`, `admin/`, and `site/`.  Right-click *Send to Compressed (zipped) folder* to zip it up and rename the resulting zipfile as desired
 - In the Joomla Extension Manager, browse to the zipfile to install it.
+
 
 ## Configuration
 
@@ -61,41 +65,28 @@ RewriteRule     ^app\/(.*)$     /webapp/$1                                      
 RewriteRule    ^app(.*)$	/index.php?option=com_jake&jrun=$1		[QSA,L]
 
 ## End - Custom redirects
-```
-- Update `CAKEPHP_ROOT/index.php` to make the following changes:
+
+1. Add the following to the top of `cakephp/app/Config/routes.php`:
 
 ```php
-[...]
-    define('APP_DIR', 'app');
-    // Make sure it's not already defined...
-    if (!defined('DS'))
-      define('DS', DIRECTORY_SEPARATOR);
-    define('ROOT', dirname(__FILE__));
-[...]
-```
-- Update `CAKEPHP_ROOT/app/webroot/index.php` to make the following changes:
-
-```php
-[...]
-//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
-// Modified from Cake/bootstrap.php so we can pre-define FULL_BASE_URL here instead.
 if (defined('JAKE')) {
-    $s = null;
-    if (isset($_SERVER['HTTPS'])) {
-        $s = 's';
-    }
     $httpHost = $_SERVER['HTTP_HOST'];
-    if (isset($httpHost)) {
-        define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . '/app');
+    if (!empty($httpHost)) {
+        // FULL_BASE_URL is deprecated, see http://book.cakephp.org/2.0/en/development/routing.html#Router::fullBaseUrl
+        Router::fullBaseUrl((isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $httpHost . '/app');
     }
-    unset($httpHost, $s);
 }
+```
+
+2.  Add the following to the bottom of `cakephp/app/webroot/index.php`:
+
+```php
 /**
 * Editing below this line should NOT be necessary.
 * Change at your own risk.
 *
 */ 
-[...] 
+
 App::uses('Dispatcher', 'Routing');
 $Dispatcher = new Dispatcher();
 $r = new CakeRequest();
@@ -136,14 +127,15 @@ if (defined('JAKE'))
 else
     $Dispatcher->dispatch($r, new CakeResponse(array('charset' => Configure::read('App.encoding'))));
 ```
-- If you have upgraded Joomla from a previous 1.5 version that had the previous Jake component installed (which obviously stopped working when you upgraded), uninstall Jake.  In addition, you'll need to manually remove the Jake menu links from the database (which in my experience were not deleted upon uninstall).  To do this, execute the following, replacing your Joomla table prefix as appropriate:
+
+3.  If you have upgraded Joomla from a previous 1.5 version that had the previous Jake component installed (which obviously stopped working when you upgraded), uninstall Jake.  In addition, you'll need to manually remove the Jake menu links from the database (which in my experience were not deleted upon uninstall).  To do this, execute the following, replacing your Joomla table prefix as appropriate:
 
 ```sql
 DELETE FROM `[TABLE_PREFIX]_menu` WHERE `link` LIKE '%jake%';
 ```
-- Merge the "Custom Redirects" section of the included .htaccess file into `JOOMLA_ROOT/.htaccess`.
 
-For more details on configuration, see [this blog post](http://blog.echothis.com/2012/09/26/jake-2-0-released/).
+4.  For more details on configuration, see [this blog post](http://blog.echothis.com/2012/09/26/jake-2-0-released/).
+
 
 ## Usage
 
@@ -158,6 +150,7 @@ if (defined('JAKE'))
 ```
 
 To add Joomla menu items linked to URL's in your Cake app, in the Joomla Menu Manager, add a new Menu Item of type "External URL" and enter the link path, e.g., `/app/posts/add`.
+
 
 ## Credits
 
