@@ -12,18 +12,18 @@ Now that Joomla offers on-demand "discovery" of new extensions directly from the
 follow these steps:
 
 1.  Copy the contents of this repo into the a temporary directory somewhere
-- Move `administrator/components/com_jake/jake.xml` to `./` 
-- Move `administrator/components/com_jake` to `admin/`
-- Move `components/com_jake` to `site/`
-- If you're not on Windows, zip it up via commandline.  Otherwise, multi-select `jake.xml`, `admin/`, and `site/`.  Right-click *Send to Compressed (zipped) folder* to zip it up and rename the resulting zipfile as desired
-- In the Joomla Extension Manager, browse to the zipfile to install it.
+2.  Move `administrator/components/com_jake/jake.xml` to `./` 
+3.  Move `administrator/components/com_jake` to `admin/`
+4.  Move `components/com_jake` to `site/`
+5.  If you're not on Windows, zip it up via commandline.  Otherwise, multi-select `jake.xml`, `admin/`, and `site/`.  Right-click *Send to Compressed (zipped) folder* to zip it up and rename the resulting zipfile as desired
+6.  In the Joomla Extension Manager, browse to the zipfile to install it.
 
 
 ## Configuration
 
-- In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
-- The CakePHP directory should be named "cakephp" and be a sibling to the Joomla one, i.e., your JOOMLA_ROOT is `/path/to/www/joomla-cms` and your CAKEPHP_ROOT is `/path/to/www/cakephp`.
-- Add the following Apache Alias, used for delivering existing files from under `CAKEPHP_ROOT/app/webroot`, to the Joomla VirtualHost. This should point to the `app/webroot` directory of the CakePHP app.
+1.  In Joomla Administration, under Extensions -> Plug-in Manager, disable the "System - Highlighting" plugin as it conflicts with the Jake component.
+2.  The CakePHP directory should be named "cakephp" and be a sibling to the Joomla one, i.e., your JOOMLA_ROOT is `/path/to/www/joomla-cms` and your CAKEPHP_ROOT is `/path/to/www/cakephp`.
+3.  Add the following Apache Alias, used for delivering existing files from under `CAKEPHP_ROOT/app/webroot`, to the Joomla VirtualHost. This should point to the `app/webroot` directory of the CakePHP app.
 
 ```
 Alias /webapp "CAKEPHP_ROOT/app/webroot"
@@ -33,9 +33,10 @@ Alias /webapp "CAKEPHP_ROOT/app/webroot"
     Allow from all
 </Directory>
 ```
-- Enable URL rewriting on both your JOOMLA_ROOT and CAKEPHP_ROOT
-- Bounce Apache
-- Update the Custom Redirects section of `JOOMLA_ROOT/.htaccess` as follows to support SEO-friendly CakePHP URLs:
+
+4.  Enable URL rewriting on both your JOOMLA_ROOT and CAKEPHP_ROOT
+5.  Bounce Apache
+6.  Update the Custom Redirects section of `JOOMLA_ROOT/.htaccess` as follows to support SEO-friendly CakePHP URLs:
 
 ```
 ## Begin - Custom redirects
@@ -65,8 +66,9 @@ RewriteRule     ^app\/(.*)$     /webapp/$1                                      
 RewriteRule    ^app(.*)$	/index.php?option=com_jake&jrun=$1		[QSA,L]
 
 ## End - Custom redirects
+```
 
-1. Add the following to the top of `cakephp/app/Config/routes.php`:
+7.  Add the following to the top of `cakephp/app/Config/routes.php`:
 
 ```php
 if (defined('JAKE')) {
@@ -78,7 +80,7 @@ if (defined('JAKE')) {
 }
 ```
 
-2.  Add the following to the bottom of `cakephp/app/webroot/index.php`:
+8.  Add the following to the bottom of `cakephp/app/webroot/index.php`:
 
 ```php
 /**
@@ -128,18 +130,19 @@ else
     $Dispatcher->dispatch($r, new CakeResponse(array('charset' => Configure::read('App.encoding'))));
 ```
 
-3.  If you have upgraded Joomla from a previous 1.5 version that had the previous Jake component installed (which obviously stopped working when you upgraded), uninstall Jake.  In addition, you'll need to manually remove the Jake menu links from the database (which in my experience were not deleted upon uninstall).  To do this, execute the following, replacing your Joomla table prefix as appropriate:
+9.  If you have upgraded Joomla from a previous 1.5 version that had the previous Jake component installed (which obviously stopped working when you upgraded), uninstall Jake.  In addition, you'll need to manually remove the Jake menu links from the database (which in my experience were not deleted upon uninstall).  To do this, execute the following, replacing your Joomla table prefix as appropriate:
 
 ```sql
 DELETE FROM `[TABLE_PREFIX]_menu` WHERE `link` LIKE '%jake%';
 ```
 
-4.  For more details on configuration, see [this blog post](http://blog.echothis.com/2012/09/26/jake-2-0-released/).
+For more details on configuration, see [this blog post](http://blog.echothis.com/2012/09/26/jake-2-0-released/).
 
 
 ## Usage
 
 After configuration, your CakePHP app is available as-is at `http://joomlaserver/app/`, so you can do stuff like this:
+
 ```php
 if (defined('JAKE'))
 {
