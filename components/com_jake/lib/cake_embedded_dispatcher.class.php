@@ -385,43 +385,50 @@ class CakeEmbeddedDispatcher {
         // http://www.the-art-of-web.com/php/html-xpath-query/
         libxml_use_internal_errors(true);
         $doc = new DOMDocument();
-        $doc->loadHTML($html);
-        // Swallow and ignore parsing errors (typically things like "Unexpected end tag : a")
+        $doc->loadHTML($html);   
         $errors = libxml_get_errors();
-        //var_dump($errors);
         libxml_clear_errors();
-        
-        $arr = $doc->getElementsByTagName("head");
-        
-        foreach ($arr as $item) {
-           $head = $this->_get_inner_html($item);
-           // Should only be one, but break to be sure
-           break;
+
+        if (count($errors) > 0)
+        {
+            // If CakePHP throws an error in a controller, you get typically things like "Unexpected end tag : a"
+            // In that case, quit parsing and just return the raw HTML
+            $contents['body'] = $html;
         }
+        else {
 
-        if (!empty($head)) {
-            // Get elements within head
+            $arr = $doc->getElementsByTagName("head");
 
-            $result = $this->_parseHead($head);
-
-            if (!isset($result['custom'])) {
-                $result['custom'] = array();
+            foreach ($arr as $item) {
+                $head = $this->_get_inner_html($item);
+                // Should only be one, but break to be sure
+                break;
             }
 
-            $contents['head'] = $result;
+            if (!empty($head)) {
+                // Get elements within head
+
+                $result = $this->_parseHead($head);
+
+                if (!isset($result['custom'])) {
+                    $result['custom'] = array();
+                }
+
+                $contents['head'] = $result;
+            }
+            // Get the body
+
+            if (preg_match_all('/' . CAKEED_REGEX_PATTERN_BODY . '/si', $html, $matches, PREG_PATTERN_ORDER) == 1) {
+                $contents['body'] = $matches[1][0];
+            }
+
+            $err = $this->pcre_error_decode();
+            if ($err != null)
+                $pcre_errors[] = 'Jake error in cake_embedded_dispatcher.class.php (body): ' . $err;
+
+            if (count($pcre_errors) > 0)
+                $contents['body'] = 'Jake errors:<pre>' . print_r($pcre_errors, true) . '</pre>';
         }
-        // Get the body
-
-        if (preg_match_all('/' . CAKEED_REGEX_PATTERN_BODY . '/si', $html, $matches, PREG_PATTERN_ORDER) == 1) {
-            $contents['body'] = $matches[1][0];
-        }
-
-        $err = $this->pcre_error_decode();
-        if ($err != null)
-            $pcre_errors[] = 'Jake error in cake_embedded_dispatcher.class.php (body): ' . $err;
-
-        if (count($pcre_errors) > 0)
-            $contents['body'] = 'Jake errors:<pre>' . print_r($pcre_errors, true) . '</pre>';
 
         // reset it back to the original limit
         ini_set('pcre.backtrack_limit', $backtrack_limit);
