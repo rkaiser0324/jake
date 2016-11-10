@@ -34,10 +34,6 @@
 	
 	<administration>
 		<menu img="components/com_jake/images/jake.png">Jake</menu>
-		<submenu>
-			<menu view="admin_send" img="components/com_jake/images/jake.png" link="option=com_jake&amp;task=documentation">Jake Documentation</menu>
-			<menu view="admin_send" img="components/com_jake/images/jake.png" link="option=com_jake&amp;task=form">Get Jake URL for CakePHP action</menu>
-		</submenu>
 		
 		<files folder="admin">
 			<filename>images/jake.png</filename>

@@ -31,32 +31,8 @@ class JakeAdminComponent extends JakeComponent
 	 */
 	function execute()
 	{
-		switch($this->jakeTask)
-		{	
-			case JAKE_ADMIN_PARAMETER_TASK_VALUE_FORM:
-			    	JToolbarHelper::title('Jake URL Generator');
-				$this->_form($this->jakeOption, JAKE_PARAMETER_TASK, $this->jakeTask);
-				break;
-				
-			case JAKE_ADMIN_PARAMETER_TASK_VALUE_DOCUMENTATION:
-			default:
 			    	JToolbarHelper::title('Jake Documentation');
-				$this->_documentation(JAKE_PARAMETER_TASK);
-				break;
-		}
-	}
-	
-	/**
-	 * Shows documentation
-	 *
-	 * @param string $taskName	Name of task parameter
-	 * 
-	 * @access private
-	 * @since 1.0
-	 */
-	function _documentation($taskName)
-	{
-		$this->_show('documentation', array ('taskName'=>$taskName));
+				$this->_form($this->jakeOption, JAKE_PARAMETER_TASK, $this->jakeTask);
 	}
 	
 	/**
